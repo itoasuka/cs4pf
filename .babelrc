@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    "transform-class-properties",
+    "babel-plugin-espower"
+  ],
+  "presets": [
+    "stage-0",
+    "es2015",
+    "react"
+  ]
+}

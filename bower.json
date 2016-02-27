@@ -1,0 +1,21 @@
+{
+  "name": "ui",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "itoasuka"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/itoasuka/play-js",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "react": "^0.14.7"
+  }
+}
