@@ -52,13 +52,13 @@ npmとbowerで依存ライブラリをインストールします。
     ├── .tern-project                         # ternjsのプロジェクトファイル
     ├── README.md                             # このファイル
     ├── app/                                  # 各種ソースコード置き場
-    │   ├── index.html                       # 単独モードで起動する際の初期ページ
-    │   ├── sass/                            # SASSソースコード置き場
-    │   └── webpack/                         # webpackでひとまとめにするあらゆるリソースの置き場
-    │       └── index.js                     # webpackでひとまとめにするリソースのエントリポイント
+    │   ├── index.html                        # 単独モードで起動する際の初期ページ
+    │   ├── sass/                             # SASSソースコード置き場
+    │   └── webpack/                          # webpackでひとまとめにするあらゆるリソースの置き場
+    │       └── index.js                      # webpackでひとまとめにするリソースのエントリポイント
     ├── bower.json                            # Bowerの設定
     ├── build/                                # ビルド結果置き場
-    │   └── assets/                          # Play Frameworkから参照されるファイルの置き場
+    │   └── assets/                           # Play Frameworkから参照されるファイルの置き場
     ├── db.json                               # json-serverで配信するJSONの設定ファイル
     ├── env.js                                # 各設定ファイルから参照されるメタ設定ファイル
     ├── gulpfile.babel.js                     # Gulpのタスクを定義するファイル
@@ -66,7 +66,7 @@ npmとbowerで依存ライブラリをインストールします。
     ├── karma.webpack.config.js               # Karma内で使用するWebpackの設定ファイル
     ├── package.json                          # npmの設定ファイル
     ├── test/                                 # テストコード置き場
-    │   └── fixtures/                        # フィクスチャ置き場
+    │   └── fixtures/                         # フィクスチャ置き場
     └── webpack.config.js                     # Webpackの設定ファイル
 
 
@@ -110,7 +110,7 @@ Jenkinsでの設定
 
 |ビルド後の後処理                    |対象項目                     |設定値                              |
 |------------------------------------|-----------------------------|------------------------------------|
-|JUnitテスト結果の集計               |テスト結果XML                |`build/test-reports/\*\*/\*.xml`    |
-|Cobertura カバレッジ・レポートの集計|Cobertura XMLレポートパターン|`build/coverage-reports/\*\*/\*.xml`|
+|JUnitテスト結果の集計               |テスト結果XML                |`build/test-reports/**/*.xml`       |
+|Cobertura カバレッジ・レポートの集計|Cobertura XMLレポートパターン|`build/coverage-reports/**/*.xml`   |
 |Checkstyle警告の集計                |集計するファイル             |`build/eslint/checkstyle-result.xml`|
 
