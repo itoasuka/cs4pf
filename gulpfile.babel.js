@@ -10,6 +10,9 @@ import fs from 'fs';
 import mkdirp from 'mkdirp';
 import jsonServer from 'json-server';
 import minimist from 'minimist';
+import browserSync from 'browser-sync';
+import stripAnsi from 'strip-ansi';
+import url from 'url';
 
 import env from './env.js';
 
@@ -23,6 +26,8 @@ const $ = gulpLoadPlugins();
 const allDistAssets = path.join(env.distAssetsDir, '**/*');
 
 const args = minimist(process.argv.slice(2));
+
+const browserSyncServer = browserSync.create();
 
 /**
  * md5 ファイルを作成するストリームを返します。
@@ -54,42 +59,66 @@ function md5() {
 gulp.task('clean', del.bind(null, [env.outputBase]));
 
 /*
- * webpack-dev-server を起動する
+ * browser-sync を起動する
  */
-gulp.task('webpack-dev-server', () => {
-  const WebpackDevServer = require('webpack-dev-server');
-  const config = require(env.webpackConfig);
-  const compiler = webpack(config);
-
-  new WebpackDevServer(compiler, {
-    publicPath: config.output.publicPath,
-    stats: {
-      colors: true
-    },
-    contentBase: (args.play) ? 'http://localhost:9000' : env.outputBase,
-    proxy: {
-      '/0/*': {
-        target: `http://localhost:${env.serverPort}/`,
-        secure: false
-      }
+gulp.task('browser-sync', () => {
+  const webpackDevMiddleware = require('webpack-dev-middleware');
+  const webpackConfig = require(env.webpackConfig);
+  const bundler = webpack(webpackConfig);
+  bundler.plugin('done', (stats) => {
+    if (stats.hasErrors() || stats.hasWarnings()) {
+      return browserSync.sockets.emit('fullscreen:message', {
+        title: "Webpack Error:",
+        body:  stripAnsi(stats.toString()),
+        timeout: 100000
+      });
     }
-  }).listen(env.webpackDevServerPort, '0.0.0.0', (err) => {
-    if(err) throw new $.util.PluginError('webpack-dev-server', err);
-
-    $.util.log('[webpack-dev-server]', `http://localhost:${(args.play) ? env.serverPort : env.webpackDevServerPort}/`);
+    browserSync.reload();
   });
+
+  const proxy = require('proxy-middleware');
+  const proxyOptions = url.parse(`http://localhost:${env.serverPort}${env.webApiPrefix}`);
+  proxyOptions.route = env.webApiPrefix;
+  const config = {
+    port: env.browserSyncPort,
+    open: false,
+    logFileChanges: false,
+    middleware: [
+      proxy(proxyOptions),
+      webpackDevMiddleware(bundler, {
+        publicPath: webpackConfig.output.publicPath,
+        stats: {colors: true}
+      })
+    ],
+    plugins: ['bs-fullscreen-message'],
+    files: [
+      path.join(env.webpackBase, '**/*')
+    ]
+  };
+  
+  if (args.play) {
+    config.proxy = `localhost:${env.serverPort}`;
+  } else {
+    config.server = {
+      baseDir: env.outputBase,
+      routes: {
+        "/bower_components": "bower_components"
+      }
+    };
+  }
+  browserSyncServer.init(config);
 });
 
 /*
  * リソース監視を開始する。
  */
-(function () {
-  const dep = ['webpack-dev-server', 'sass:watch', 'bower'];
+gulp.task('watch', () => {
+  const dep = ['sass:watch'];
   if (!args.play) {
     dep.push('html:watch', 'json-server');
   }
-  gulp.task('watch', dep);
-}());
+  runSequence('clean', dep, 'browser-sync');
+});
 
 /*
  * Webpack でリソースをまとめる。
@@ -143,7 +172,7 @@ gulp.task('gzip', () => {
  * すべてのリソースを処理して出荷品質にする。
  */
 gulp.task('build', ['clean'], (cb) => {
-  runSequence(['webpack', 'sass', 'html', 'bower'], 'md5', 'gzip', cb);
+  runSequence(['webpack', 'sass'], 'md5', 'gzip', cb);
 });
 
 /*
@@ -214,6 +243,11 @@ gulp.task('karma:watch', (cb) => {
 gulp.task('test', ['karma']);
 
 /*
+ * karma:watch タスクのエイリアス
+ */
+gulp.task('test:watch', ['karma:watch']);
+
+/*
  * eslint で書式チェックを行う。
  */
 gulp.task('eslint', () => {
@@ -226,17 +260,29 @@ gulp.task('eslint', () => {
 });
 
 /*
+ * eslint タスクのエイリアス
+ */
+gulp.task('checkstyle', ['eslint']);
+
+/*
  * SASS で処理を行う。
  */
 gulp.task('sass', () => {
   return gulp.src(env.sassSrc)
+    .pipe($.cached('sass'))
     .pipe($.sourcemaps.init())
     .pipe($.sass().on('error', $.sass.logError))
     .pipe($.autoprefixer('last 2 version'))
     .pipe($.cssnano())
     .pipe($.sourcemaps.write('./'))
-    .pipe(gulp.dest(env.distAssetsDir));
+    .pipe(gulp.dest(env.distAssetsDir))
+    .pipe(browserSyncServer.stream());
 });
+
+/*
+ * sass タスクのエイリアス
+ */
+gulp.task('css', ['sass']);
 
 /*
  * SASS 対象リソースの監視を行う。
@@ -263,7 +309,9 @@ gulp.task('json-server', () => {
  */
 gulp.task('html', () => {
   return gulp.src(env.htmlSrc)
-    .pipe(gulp.dest(env.outputBase));
+    .pipe($.changed(env.outputBase))
+    .pipe(gulp.dest(env.outputBase))
+    .pipe(browserSyncServer.stream());
 });
 
 /*
@@ -271,12 +319,4 @@ gulp.task('html', () => {
  */
 gulp.task('html:watch', ['html'], () => {
   gulp.watch(env.htmlSrc, ['html']);
-});
-
-/*
- * bower を配置する。
- */
-gulp.task('bower', () => {
-  return gulp.src('bower_components/**/*')
-    .pipe(gulp.dest(path.join(env.outputBase, '/bower_components/')));
 });

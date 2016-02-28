@@ -107,11 +107,11 @@ env.distAssetsDir = path.resolve(env.outputBase, 'assets');
 env.nodeModules = path.resolve(__dirname, 'node_modules');
 
 /**
- * webpack-dev-server のポート番号
+ * browser-sync のポート番号
  *
  * @type {number}
  */
-env.webpackDevServerPort = 8080;
+env.browserSyncPort = 3000;
 
 /**
  * 開発用サーバサイドのポート番号
@@ -119,5 +119,12 @@ env.webpackDevServerPort = 8080;
  * @type {number}
  */
 env.serverPort = 9000;
+
+/**
+ * Web API パスのプレフィックス
+ * 
+ * @type {string}
+ */
+env.webApiPrefix = '/0';
 
 module.exports = env;

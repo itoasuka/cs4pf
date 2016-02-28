@@ -27,7 +27,8 @@ module.exports = {
     new webpack.DefinePlugin({'__DEV__': true}),
     new webpack.ProvidePlugin({
       'Promise': 'bluebird'
-    })
+    }),
+    new webpack.NoErrorsPlugin()
   ],
   module: {
     preLoaders: [

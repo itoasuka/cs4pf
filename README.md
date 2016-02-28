@@ -79,15 +79,15 @@ Gulpタスク
 |build         |プロダクト用のファイルを生成す。                                                                 |
 |watch         |監視モードで起動し、開発用Webサーバを起動する。`--play`をつけるとPlay Framework連動モードになる。|
 |test          |テストを実行する。                                                                               |
-|karma:watch   |監視モードでkarmaを起動し、ソースコードを改変する度にテストを実行する。                          |
-|eslint        |eslintによるコーディングスタイルチェックを行い、Checkstyle互換形式でレポートを出力する。         |
-|sass          |sassの処理のみ行う。                                                                             |
+|test:watch    |監視モードでkarmaを起動し、ソースコードを改変する度にテストを実行する。                          |
+|checkstyle    |eslintによるコーディングスタイルチェックを行い、Checkstyle互換形式でレポートを出力する。         |
+|css           |sassの処理を行う。buildタスクに含まれている。                                                    |
 
 
 開発用Webサーバ
 ---------------
 
-`gulp watch` で開発用Webサーバが起動します。[http://localhost:8080/](http://localhost:8080/)にアクセスしてください。
+`gulp watch` で開発用Webサーバが起動します。[http://localhost:3000/](http://localhost:3000/)にアクセスしてください。
 このとき表示されるページは `app/index.html` です。開発用Webサーバと同時に [JSON Server](https://github.com/typicode/json-server)
 によるモック Web API サーバが起動します。これにり、サーバサイドの開発進捗にあまり影響されること無くクライアントサイドの開発をすすめることが可能です。
 
@@ -96,8 +96,8 @@ Gulpタスク
 ------
 
 テストは `gulp test` で起動し、[Karma](https://karma-runner.github.io/)を使用して、FirefoxとChromeを用いたテストを行います。
-`gulp karma:watch` で起動するとソースコードの監視を開始し、ソースコード（プロダクトコードおよびテストコード）に変更があるたびに自動的にテストが実行されます。
-
+`gulp test:watch` で起動するとソースコードの監視を開始し、ソースコード（プロダクトコードおよびテストコード）に変更があるたびに自動的にテストが実行されます。
+AjaxでWeb APIにアクセスする部分のテストは[Sinon.JS](http://sinonjs.org/)のFake Serverを使用しています。
 
 Jenkinsでの設定
 ---------------
