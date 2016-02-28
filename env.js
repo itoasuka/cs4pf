@@ -58,6 +58,15 @@ env.htmlSrc = [
 ];
 
 /**
+ * 画像ソース
+ *
+ * @type {array}
+ */
+env.imageSrc = [
+  path.resolve(env.inputBase, '**/*.+(jpg|jpeg|png|gif|svg)')
+];
+
+/**
  * テストコードの置き場
  *
  * @type {string}

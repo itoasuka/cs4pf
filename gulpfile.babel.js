@@ -140,6 +140,7 @@ gulp.task('webpack', (cb) => {
       'Promise': 'bluebird'
     })
   ];
+  config.debug = false;
 
   webpack(config, (err, stats) => {
     if(err) throw new $.util.PluginError("webpack", err);
@@ -306,7 +307,7 @@ gulp.task('json-server', () => {
 });
 
 /*
- * HTML を移動する（webpack-dev-serverで参照するため）
+ * HTML を移動する
  */
 gulp.task('html', () => {
   return gulp.src(env.htmlSrc)
@@ -320,4 +321,24 @@ gulp.task('html', () => {
  */
 gulp.task('html:watch', ['html'], () => {
   gulp.watch(env.htmlSrc, ['html']);
+});
+
+/*
+ * 画像を処理する
+ */
+gulp.task('image', () => {
+  return gulp.src(env.imageSrc)
+    .pipe($.changed(env.outputBase))
+    .pipe($.imagemin({
+      optimizationLevel: 7
+    }))
+    .pipe(gulp.dest(env.outputBase))
+    .pipe(browserSyncServer.stream());
+});
+
+/*
+ * 画像の監視を行う
+ */
+gulp.task('image:watch', ['image'], () => {
+  gulp.watch(env.imageSrc, ['image']);
 });
