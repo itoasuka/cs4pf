@@ -44,7 +44,7 @@ module.exports = {
     loaders: [
       {
         test: /\.scss$/,
-        loaders: ['style', 'css', 'sass']
+        loaders: ['style', 'css', 'postcss', 'sass']
       },
       {
         test: /\.jsx?$/,
@@ -58,6 +58,13 @@ module.exports = {
         loader: 'json'
       }
     ]
+  },
+  postcss: function () {
+    return [
+      require('autoprefixer'),
+      require('cssnext'),
+      require('cssnano')
+    ];
   },
   node:  {
     fs: 'empty'

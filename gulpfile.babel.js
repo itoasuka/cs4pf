@@ -268,12 +268,13 @@ gulp.task('checkstyle', ['eslint']);
  * SASS で処理を行う。
  */
 gulp.task('sass', () => {
+  const config = require('./webpack.config');
+
   return gulp.src(env.sassSrc)
     .pipe($.cached('sass'))
     .pipe($.sourcemaps.init())
     .pipe($.sass().on('error', $.sass.logError))
-    .pipe($.autoprefixer('last 2 version'))
-    .pipe($.cssnano())
+    .pipe($.postcss(config.postcss()))
     .pipe($.sourcemaps.write('./'))
     .pipe(gulp.dest(env.distAssetsDir))
     .pipe(browserSyncServer.stream());
