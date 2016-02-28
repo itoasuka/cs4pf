@@ -271,7 +271,7 @@ gulp.task('checkstyle', ['eslint']);
 gulp.task('sass', () => {
   const config = require('./webpack.config');
 
-  return gulp.src(env.sassSrc)
+  return gulp.src([env.sassSrc, `!${env.webpackAll}`])
     .pipe($.cached('sass'))
     .pipe($.sourcemaps.init())
     .pipe($.sass().on('error', $.sass.logError))
@@ -310,7 +310,7 @@ gulp.task('json-server', () => {
  * HTML を移動する
  */
 gulp.task('html', () => {
-  return gulp.src(env.htmlSrc)
+  return gulp.src([env.htmlSrc, `!${env.webpackAll}`])
     .pipe($.changed(env.outputBase))
     .pipe(gulp.dest(env.outputBase))
     .pipe(browserSyncServer.stream());
@@ -327,7 +327,7 @@ gulp.task('html:watch', ['html'], () => {
  * 画像を処理する
  */
 gulp.task('image', () => {
-  return gulp.src(env.imageSrc)
+  return gulp.src([env.imageSrc, `!${env.webpackAll}`])
     .pipe($.changed(env.outputBase))
     .pipe($.imagemin({
       optimizationLevel: 7

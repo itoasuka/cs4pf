@@ -29,6 +29,11 @@ env.outputBase = path.resolve(__dirname, 'build');
 env.webpackBase = path.resolve(env.inputBase, 'webpack');
 
 /**
+ * Webpack の処理対象のすべてのファイル
+ */
+env.webpackAll = path.resolve(env.webpackBase, '**/*');
+
+/**
  * Webpack で扱う JavaScript ファイル
  *
  * @type {array}
@@ -41,30 +46,23 @@ env.webpackJs = [
 /**
  * SASS で処理するソース
  *
- * @type {array}
+ * @type {string}
  */
-env.sassSrc = [
-  path.resolve(env.inputBase, 'sass/**/*.scss'),
-  path.resolve(env.inputBase, 'sass/**/*.sass')
-];
+env.sassSrc = path.resolve(env.inputBase, 'sass/**/*.+(scss|sass)');
 
 /**
  * HTML ソース
  *
- * @type {array}
+ * @type {string}
  */
-env.htmlSrc = [
-  path.resolve(env.inputBase, '**/*.html')
-];
+env.htmlSrc = path.resolve(env.inputBase, '**/*.html');
 
 /**
  * 画像ソース
  *
- * @type {array}
+ * @type {string}
  */
-env.imageSrc = [
-  path.resolve(env.inputBase, '**/*.+(jpg|jpeg|png|gif|svg)')
-];
+env.imageSrc = path.resolve(env.inputBase, '**/*.+(jpg|jpeg|png|gif|svg)');
 
 /**
  * テストコードの置き場
